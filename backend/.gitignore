@@ -1,0 +1,7 @@
+node_modules/
+uploads/
+.env
+npm-debug.log*
+*.log
+.DS_Store
+_frontend_to_delete/
