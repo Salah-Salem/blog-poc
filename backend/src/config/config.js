@@ -8,7 +8,7 @@ const dbUrl =
 
 const base = {
   username: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'root',
   database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'blog_db',
   host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
   port: Number(process.env.DB_PORT || process.env.MYSQLPORT) || 3306,

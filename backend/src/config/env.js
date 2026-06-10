@@ -20,7 +20,7 @@ const env = {
     port: Number(process.env.DB_PORT || process.env.MYSQLPORT) || 3306,
     name: process.env.DB_NAME || process.env.MYSQLDATABASE || 'blog_db',
     user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'root',
     dialect: process.env.DB_DIALECT || 'mysql',
   },
   jwt: {
