@@ -16,11 +16,11 @@ const env = {
   port: process.env.PORT || 5000,
   db: {
     url: dbUrl || undefined,
-    host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
-    port: Number(process.env.DB_PORT || process.env.MYSQLPORT) || 3306,
-    name: process.env.DB_NAME || process.env.MYSQLDATABASE || 'blog_db',
-    user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'root',
+    host: process.env.DB_HOST || process.env.MYSQLHOST,
+    port: Number(process.env.DB_PORT || process.env.MYSQLPORT) || undefined,
+    name: process.env.DB_NAME || process.env.MYSQLDATABASE,
+    user: process.env.DB_USER || process.env.MYSQLUSER,
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD,
     dialect: process.env.DB_DIALECT || 'mysql',
   },
   jwt: {
