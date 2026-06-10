@@ -1,9 +1,21 @@
 require('dotenv').config();
 
+// Railway MySQL exposes MYSQL_URL; normalize so Sequelize CLI can use DATABASE_URL too.
+const dbUrl =
+  process.env.MYSQL_URL ||
+  process.env.DATABASE_URL ||
+  process.env.DB_URL ||
+  '';
+
+if (dbUrl && !process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = dbUrl;
+}
+
 // Supports local .env names and Railway MySQL plugin variables (MYSQL*)
 const env = {
   port: process.env.PORT || 5000,
   db: {
+    url: dbUrl || undefined,
     host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
     port: Number(process.env.DB_PORT || process.env.MYSQLPORT) || 3306,
     name: process.env.DB_NAME || process.env.MYSQLDATABASE || 'blog_db',

@@ -13,8 +13,28 @@ const start = async () => {
       console.log(`Server is running on port ${env.port}`);
     });
   } catch (err) {
+    const { db } = env;
     // eslint-disable-next-line no-console
-    console.error('Unable to start the server:', err.message);
+    console.error('Unable to start the server:', err.message || err);
+    if (process.env.NODE_ENV === 'production') {
+      // eslint-disable-next-line no-console
+      console.error('DB target:', {
+        usingUrl: Boolean(db.url),
+        host: db.url ? '(from MYSQL_URL)' : db.host,
+        port: db.port,
+        database: db.name,
+        user: db.user,
+      });
+      if (
+        !db.url &&
+        (db.host === 'localhost' || db.host === '127.0.0.1' || db.host === '::1')
+      ) {
+        // eslint-disable-next-line no-console
+        console.error(
+          'Railway hint: add MYSQL_URL=${{MySQL.MYSQL_URL}} on this service, or reference MySQL vars: DB_HOST=${{MySQL.MYSQLHOST}}, DB_PORT=${{MySQL.MYSQLPORT}}, DB_NAME=${{MySQL.MYSQLDATABASE}}, DB_USER=${{MySQL.MYSQLUSER}}, DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}'
+        );
+      }
+    }
     process.exit(1);
   }
 };
