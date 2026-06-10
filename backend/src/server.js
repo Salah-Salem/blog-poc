@@ -3,6 +3,16 @@ const env = require('./config/env');
 const { sequelize } = require('./models');
 
 const start = async () => {
+  // eslint-disable-next-line no-console
+  console.log('[startup] NODE_ENV:', process.env.NODE_ENV);
+  // eslint-disable-next-line no-console
+  console.log('[startup] DB config:', {
+    usingUrl: Boolean(env.db.url),
+    host: env.db.url ? '(from MYSQL_URL)' : env.db.host,
+    port: env.db.port,
+    name: env.db.name,
+  });
+
   try {
     await sequelize.authenticate();
     // eslint-disable-next-line no-console
