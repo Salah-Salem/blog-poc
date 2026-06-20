@@ -61,6 +61,11 @@ export default function LoginPage() {
             toggleMask
             required
           />
+          <div className="text-right -mt-2">
+            <Link href="/forgot-password" className="text-sm text-[#1877f2] font-semibold hover:underline">
+              Forgot password?
+            </Link>
+          </div>
           <Button
             type="submit"
             label="Log in"
