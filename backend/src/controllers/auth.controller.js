@@ -22,11 +22,12 @@ const login = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
   try {
     const { resetLink } = await authService.forgotPassword(req.body);
+    console.log('resetLink controller backend =======> ', resetLink);
     const payload = {
       message: 'If an account exists for this email, a reset link has been generated.',
     };
 
-    if (resetLink && process.env.NODE_ENV !== 'production') {
+    if (resetLink) {
       payload.resetLink = resetLink;
     }
 

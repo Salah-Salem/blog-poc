@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
     setResetLink('');
     forgotPassword.mutate(email.trim(), {
       onSuccess: (res) => {
-        console.log('res onSubmit frontend ========> ', res);
+        // console.log('res onSubmit frontend ========> ', res);
         setResetLink(res.resetLink || '');
       },
     });
