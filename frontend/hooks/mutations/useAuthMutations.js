@@ -45,7 +45,8 @@ export function useForgotPasswordMutation() {
         method: 'POST',
         body: { email },
       }),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      console.log('res onSuccess backend ========> ', res);
       toast.success('Reset link ready', 'Check the page for your password reset link.');
     },
     onError: (err) => {

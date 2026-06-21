@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
     setResetLink('');
     forgotPassword.mutate(email.trim(), {
       onSuccess: (res) => {
-        console.log('res =======> ', res);
+        console.log('res onSubmit frontend ========> ', res);
         setResetLink(res.resetLink || '');
       },
     });
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
                   </Link>
                 </>
               ) : (
-                'If this email exists, a reset link has been generated.'
+                'No reset link generated.'
               )}
             </div>
           )}
