@@ -20,7 +20,7 @@ export function useCreateCommentMutation(postId) {
         body: { content },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.posts.comments(postId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.admin.comments() });
       queryClient.invalidateQueries({ queryKey: queryKeys.admin.stats() });
       toast.success('Comment added', 'Your comment was posted.');
@@ -40,7 +40,7 @@ export function useUpdateCommentMutation(postId) {
     mutationFn: ({ id, content }) =>
       api(`/comments/${id}`, { method: 'PUT', token, body: { content } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.posts.comments(postId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       toast.success('Comment updated', 'Your comment was saved.');
     },
     onError: (err) => {
@@ -57,7 +57,7 @@ export function useDeleteCommentMutation(postId) {
   return useMutation({
     mutationFn: (id) => api(`/comments/${id}`, { method: 'DELETE', token }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.posts.comments(postId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.admin.comments() });
       queryClient.invalidateQueries({ queryKey: queryKeys.admin.stats() });
       toast.success('Comment deleted', 'The comment was removed.');

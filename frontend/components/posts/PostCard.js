@@ -12,7 +12,11 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import UserAvatar from '@/components/ui/UserAvatar';
 import VisibilityBadge from '@/components/posts/VisibilityBadge';
 import { useAuth } from '@/context/AuthContext';
-import { useUpdatePostMutation, useDeletePostMutation } from '@/hooks/mutations/usePostMutations';
+import {
+  useUpdatePostMutation,
+  useDeletePostMutation,
+  useReactPostMutation,
+} from '@/hooks/mutations/usePostMutations';
 
 const visibilityOptions = [
   { label: 'Public', value: 'public', icon: 'pi pi-globe' },
@@ -38,6 +42,7 @@ export default function PostCard({
   const router = useRouter();
   const updatePost = useUpdatePostMutation();
   const deletePost = useDeletePostMutation();
+  const reactPost = useReactPostMutation();
 
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(post.title);
@@ -47,7 +52,10 @@ export default function PostCard({
   const author = post.author?.name || 'Unknown';
   const authorImage = post.author?.profileImage;
   const isOwner = isLoggedIn && user?.id === post.userId;
-  const commentCount = post.comments?.length ?? 0;
+  const commentCount = Number(post.commentCount ?? post.comments?.length ?? 0);
+  const likeCount = Number(post.likeCount ?? 0);
+  const dislikeCount = Number(post.dislikeCount ?? 0);
+  const currentReaction = post.currentUserReaction;
   const excerpt =
     post.content?.length > 280 && !showFull
       ? `${post.content.slice(0, 280)}...`
@@ -87,6 +95,10 @@ export default function PostCard({
       },
       { onSuccess: () => setEditing(false) }
     );
+  };
+
+  const handleReaction = (type) => {
+    reactPost.mutate({ id: post.id, type });
   };
 
   return (
@@ -131,21 +143,34 @@ export default function PostCard({
       <div className="border-t border-[#dddfe2] px-2 py-1 flex">
         <Link href={`/posts/${post.id}`} className="flex-1">
           <Button
-            label={profileMode && commentCount > 0 ? `Comments (${commentCount})` : 'Comment'}
+            label={`Comments (${commentCount})`}
             icon="pi pi-comment"
             text
-            className="w-full !text-[#65676b] !font-semibold"
+            className="w-full text-[#65676b]! font-semibold!"
           />
         </Link>
-        {!showFull && !profileMode && (
-          <Button
-            label="Read"
-            icon="pi pi-arrow-right"
-            text
-            className="flex-1 !text-[#65676b] !font-semibold"
-            onClick={() => router.push(`/posts/${post.id}`)}
-          />
-        )}
+        <Button
+          label={`Like (${likeCount})`}
+          icon="pi pi-thumbs-up"
+          text
+          disabled={!isLoggedIn}
+          loading={reactPost.isPending}
+          className={`flex-1 font-semibold! ${
+            currentReaction === 'like' ? 'text-[#1877f2]!' : 'text-[#65676b]!'
+          }`}
+          onClick={() => handleReaction('like')}
+        />
+        <Button
+          label={`Dislike (${dislikeCount})`}
+          icon="pi pi-thumbs-down"
+          text
+          disabled={!isLoggedIn}
+          loading={reactPost.isPending}
+          className={`flex-1 font-semibold! ${
+            currentReaction === 'dislike' ? 'text-[#1877f2]!' : 'text-[#65676b]!'
+          }`}
+          onClick={() => handleReaction('dislike')}
+        />
       </div>
 
       <Dialog
@@ -178,7 +203,7 @@ export default function PostCard({
             label="Save changes"
             loading={updatePost.isPending}
             onClick={handleSave}
-            className="!bg-[#1877f2] !border-[#1877f2]"
+            className="bg-[#1877f2]! border-[#1877f2]!"
           />
         </div>
       </Dialog>

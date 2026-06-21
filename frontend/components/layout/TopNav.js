@@ -22,7 +22,7 @@ export default function TopNav() {
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-[#dddfe2]">
-      <div className="max-w-[1200px] mx-auto px-4 h-14 flex items-center gap-3">
+      <div className="mx-auto px-12 h-20 flex items-center gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <span className="w-10 h-10 rounded-full bg-[#1877f2] text-white flex items-center justify-center text-xl font-bold">
             b

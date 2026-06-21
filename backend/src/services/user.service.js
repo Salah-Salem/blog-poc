@@ -1,5 +1,29 @@
+const { literal } = require('sequelize');
 const { User, Post, Comment } = require('../models');
 const { ApiError } = require('../utils/response');
+
+const postReactionAttributes = (userId) => ({
+  include: [
+    [
+      literal(
+        '(SELECT COUNT(*) FROM `post_reactions` AS `likeCountReactions` WHERE `likeCountReactions`.`postId` = `Post`.`id` AND `likeCountReactions`.`type` = \'like\')'
+      ),
+      'likeCount',
+    ],
+    [
+      literal(
+        '(SELECT COUNT(*) FROM `post_reactions` AS `dislikeCountReactions` WHERE `dislikeCountReactions`.`postId` = `Post`.`id` AND `dislikeCountReactions`.`type` = \'dislike\')'
+      ),
+      'dislikeCount',
+    ],
+    [
+      literal(
+        `(SELECT \`type\` FROM \`post_reactions\` AS \`currentUserReactions\` WHERE \`currentUserReactions\`.\`postId\` = \`Post\`.\`id\` AND \`currentUserReactions\`.\`userId\` = ${Number(userId)} LIMIT 1)`
+      ),
+      'currentUserReaction',
+    ],
+  ],
+});
 
 const getProfile = (user) => ({
   id: user.id,
@@ -51,6 +75,7 @@ const getMyPosts = async (userId, { page = 1, limit = 10 } = {}) => {
 
   const { count, rows } = await Post.findAndCountAll({
     where: { userId },
+    attributes: postReactionAttributes(userId),
     limit: pageSize,
     offset,
     order: [['createdAt', 'DESC']],

@@ -7,7 +7,7 @@ export default function RightSidebar() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <aside className="hidden xl:block w-[300px] shrink-0 space-y-3 sticky top-20 self-start">
+    <aside className="hidden xl:block w-[400px] shrink-0 space-y-3 sticky top-20 self-start">
       <div className="fb-card p-4">
         <h3 className="font-semibold text-[#65676b] text-sm mb-3">Community</h3>
         <p className="text-sm text-[#050505] leading-relaxed">

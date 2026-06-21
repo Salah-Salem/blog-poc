@@ -13,11 +13,18 @@ const postValidation = [
   body('visibility').optional().isIn(['public', 'private']).withMessage('visibility must be public or private'),
 ];
 
-router.get('/', postController.getPosts);
+router.get('/', optionalAuthenticate, postController.getPosts);
 router.get('/:id', optionalAuthenticate, postController.getPost);
 router.post('/', authenticate, postValidation, validate, postController.createPost);
 router.put('/:id', authenticate, postValidation, validate, postController.updatePost);
 router.delete('/:id', authenticate, postController.deletePost);
+router.post(
+  '/:id/reaction',
+  authenticate,
+  [body('type').isIn(['like', 'dislike']).withMessage('type must be like or dislike')],
+  validate,
+  postController.reactToPost
+);
 
 router.get('/:id/comments', commentController.getPostComments);
 router.post(

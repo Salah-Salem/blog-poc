@@ -12,7 +12,7 @@ const createPost = async (req, res, next) => {
 
 const getPosts = async (req, res, next) => {
   try {
-    const result = await postService.getPosts(req.query);
+    const result = await postService.getPosts(req.query, req.user ?? null);
     return success(res, 200, result);
   } catch (err) {
     next(err);
@@ -46,4 +46,13 @@ const deletePost = async (req, res, next) => {
   }
 };
 
-module.exports = { createPost, getPosts, getPost, updatePost, deletePost };
+const reactToPost = async (req, res, next) => {
+  try {
+    const result = await postService.reactToPost(req.params.id, req.user.id, req.body);
+    return success(res, 200, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { createPost, getPosts, getPost, updatePost, deletePost, reactToPost };

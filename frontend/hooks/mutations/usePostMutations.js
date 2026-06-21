@@ -65,3 +65,21 @@ export function useDeletePostMutation() {
     },
   });
 }
+
+export function useReactPostMutation() {
+  const token = useApiToken();
+  const queryClient = useQueryClient();
+  const toast = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, type }) =>
+      api(`/posts/${id}/reaction`, { method: 'POST', token, body: { type } }),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.detail(id) });
+    },
+    onError: (err) => {
+      toast.error('Failed to update reaction', mutationErrorDetail(err));
+    },
+  });
+}

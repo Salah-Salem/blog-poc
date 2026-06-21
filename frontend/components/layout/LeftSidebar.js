@@ -17,7 +17,7 @@ export default function LeftSidebar() {
   const { user, isLoggedIn, isAdmin } = useAuth();
 
   return (
-    <aside className="hidden lg:block w-[280px] shrink-0 space-y-2 sticky top-20 self-start">
+    <aside className="hidden lg:block w-[380px] shrink-0 space-y-2 sticky top-20 self-start">
       {isLoggedIn && (
         <div className="fb-card flex items-center gap-3 p-3">
           <UserAvatar name={user.name} image={user.profileImage} />
