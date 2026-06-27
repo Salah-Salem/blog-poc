@@ -6,21 +6,33 @@ import { Button } from 'primereact/button';
 import InfiniteScrollLoader from '@/components/ui/InfiniteScrollLoader';
 import PageLoader from '@/components/ui/PageLoader';
 import { Password } from 'primereact/password';
+import { SelectButton } from 'primereact/selectbutton';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Message } from 'primereact/message';
 import AppShell from '@/components/layout/AppShell';
 import AuthGuard from '@/components/auth/AuthGuard';
 import ProfileHero from '@/components/profile/ProfileHero';
 import PostCard from '@/components/posts/PostCard';
+import VisibilityBadge from '@/components/posts/VisibilityBadge';
 import { useAuth } from '@/context/AuthContext';
 import { useProfileQuery } from '@/hooks/queries/useProfileQuery';
+import { usePrivacyQuery } from '@/hooks/queries/usePrivacyQuery';
 import { useInfiniteMyPostsQuery } from '@/hooks/queries/useInfiniteMyPostsQuery';
-import { useChangePasswordMutation } from '@/hooks/mutations/useProfileMutations';
+import {
+  useChangePasswordMutation,
+  useUpdatePrivacyMutation,
+} from '@/hooks/mutations/useProfileMutations';
 import { formatDateOfBirth } from '@/lib/profileUtils';
+
+const postVisibilityOptions = [
+  { label: 'Public', value: 'public', icon: 'pi pi-globe' },
+  { label: 'Private', value: 'private', icon: 'pi pi-lock' },
+];
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const { data: profile } = useProfileQuery();
+  const { data: privacy, isLoading: privacyLoading } = usePrivacyQuery();
   const {
     posts,
     isLoading: postsLoading,
@@ -29,8 +41,10 @@ export default function ProfilePage() {
     fetchNextPage,
   } = useInfiniteMyPostsQuery({ limit: 5 });
   const changePassword = useChangePasswordMutation();
+  const updatePrivacy = useUpdatePrivacyMutation();
 
   const displayUser = profile || user;
+  const postVisibility = privacy?.postVisibility || 'public';
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -107,6 +121,36 @@ export default function ProfilePage() {
                       isLoadingMore={isFetchingNextPage}
                       onLoadMore={fetchNextPage}
                       showEndMessage={posts.length > 0}
+                    />
+                  </div>
+                )}
+              </TabPanel>
+
+              <TabPanel header="Post Privacy">
+                {privacyLoading ? (
+                  <PageLoader label="Loading privacy..." />
+                ) : (
+                  <div className="max-w-xl space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-[#050505] mb-1">Who can see your posts?</h3>
+                      <p className="text-sm text-[#65676b]">
+                        This setting applies to all posts on your profile. New and existing posts follow this value.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="text-sm font-semibold text-[#65676b]">Current:</span>
+                      <VisibilityBadge visibility={postVisibility} />
+                    </div>
+                    <SelectButton
+                      value={postVisibility}
+                      options={postVisibilityOptions}
+                      onChange={(e) => {
+                        if (e.value && e.value !== postVisibility) {
+                          updatePrivacy.mutate({ postVisibility: e.value });
+                        }
+                      }}
+                      optionLabel="label"
+                      disabled={updatePrivacy.isPending}
                     />
                   </div>
                 )}

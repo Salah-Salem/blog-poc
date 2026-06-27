@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const { Op } = require('sequelize');
-const { User } = require('../models');
+const { User, UserPrivacy } = require('../models');
 const { ApiError } = require('../utils/response');
 const { signToken } = require('../utils/jwt');
 const { getProfile } = require('./user.service');
@@ -20,7 +20,7 @@ const register = async ({ name, email, password, phone, address, dateOfBirth }) 
   if (existing) {
     throw new ApiError(409, 'Email is already registered');
   }
-  await User.create({
+  const user = await User.create({
     name,
     email,
     password,
@@ -28,6 +28,7 @@ const register = async ({ name, email, password, phone, address, dateOfBirth }) 
     address: address?.trim() || null,
     dateOfBirth: dateOfBirth || null,
   });
+  await UserPrivacy.create({ userId: user.id, postVisibility: 'public' });
 };
 
 const login = async ({ email, password }) => {

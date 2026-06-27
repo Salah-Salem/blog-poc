@@ -1,21 +1,36 @@
-const { Comment, Post, User } = require('../models');
+const { Comment, Post, User, UserPrivacy } = require('../models');
 const { ApiError } = require('../utils/response');
 
-const ensurePostExists = async (postId) => {
-  const post = await Post.findByPk(postId);
+const ensurePostExists = async (postId, user = null) => {
+  const post = await Post.findByPk(postId, {
+    include: [
+      {
+        model: User,
+        as: 'author',
+        attributes: ['id'],
+        include: [{ model: UserPrivacy, as: 'privacy', attributes: ['postVisibility'] }],
+      },
+    ],
+  });
   if (!post) {
     throw new ApiError(404, 'Post not found');
+  }
+  const postVisibility = post.author?.privacy?.postVisibility || 'public';
+  const isOwner = user && post.userId === user.id;
+  const isAdmin = user?.role === 'admin';
+  if (postVisibility === 'private' && !isOwner && !isAdmin) {
+    throw new ApiError(403, "This profile's posts are private");
   }
   return post;
 };
 
-const createComment = async (postId, userId, { content }) => {
-  await ensurePostExists(postId);
-  return Comment.create({ content, postId, userId });
+const createComment = async (postId, user, { content }) => {
+  await ensurePostExists(postId, user);
+  return Comment.create({ content, postId, userId: user.id });
 };
 
-const getPostComments = async (postId) => {
-  await ensurePostExists(postId);
+const getPostComments = async (postId, user = null) => {
+  await ensurePostExists(postId, user);
   return Comment.findAll({
     where: { postId },
     order: [['createdAt', 'DESC']],

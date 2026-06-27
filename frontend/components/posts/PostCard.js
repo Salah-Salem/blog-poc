@@ -7,7 +7,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { SelectButton } from 'primereact/selectbutton';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import UserAvatar from '@/components/ui/UserAvatar';
 import VisibilityBadge from '@/components/posts/VisibilityBadge';
@@ -17,11 +16,6 @@ import {
   useDeletePostMutation,
   useReactPostMutation,
 } from '@/hooks/mutations/usePostMutations';
-
-const visibilityOptions = [
-  { label: 'Public', value: 'public', icon: 'pi pi-globe' },
-  { label: 'Private', value: 'private', icon: 'pi pi-lock' },
-];
 
 function formatDate(date) {
   return new Date(date).toLocaleString(undefined, {
@@ -47,10 +41,10 @@ export default function PostCard({
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
-  const [visibility, setVisibility] = useState(post.visibility || 'public');
 
   const author = post.author?.name || 'Unknown';
   const authorImage = post.author?.profileImage;
+  const profilePostVisibility = post.author?.privacy?.postVisibility || 'public';
   const isOwner = isLoggedIn && user?.id === post.userId;
   const commentCount = Number(post.commentCount ?? post.comments?.length ?? 0);
   const likeCount = Number(post.likeCount ?? 0);
@@ -64,7 +58,6 @@ export default function PostCard({
   const openEdit = () => {
     setTitle(post.title);
     setContent(post.content);
-    setVisibility(post.visibility || 'public');
     setEditing(true);
   };
 
@@ -91,7 +84,6 @@ export default function PostCard({
         id: post.id,
         title: title.trim(),
         content: content.trim(),
-        visibility,
       },
       { onSuccess: () => setEditing(false) }
     );
@@ -109,7 +101,7 @@ export default function PostCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-semibold text-[#050505] truncate">{author}</p>
-            {(profileMode || isOwner) && <VisibilityBadge visibility={post.visibility} />}
+            {(profileMode || isOwner) && <VisibilityBadge visibility={profilePostVisibility} />}
           </div>
           <p className="text-xs text-[#65676b]">{formatDate(post.createdAt)}</p>
         </div>
@@ -125,7 +117,7 @@ export default function PostCard({
         {showFull ? (
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <h1 className="text-xl font-bold text-[#050505]">{post.title}</h1>
-            <VisibilityBadge visibility={post.visibility} />
+            <VisibilityBadge visibility={profilePostVisibility} />
           </div>
         ) : (
           <Link href={`/posts/${post.id}`}>
@@ -189,16 +181,9 @@ export default function PostCard({
             className="w-full"
             placeholder="Content"
           />
-          <div>
-            <label className="text-sm font-semibold text-[#65676b] block mb-2">Privacy</label>
-            <SelectButton
-              value={visibility}
-              options={visibilityOptions}
-              onChange={(e) => e.value && setVisibility(e.value)}
-              optionLabel="label"
-              className="w-full"
-            />
-          </div>
+          <p className="text-sm text-[#65676b]">
+            Post privacy is managed from your profile settings.
+          </p>
           <Button
             label="Save changes"
             loading={updatePost.isPending}

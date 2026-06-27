@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { SelectButton } from 'primereact/selectbutton';
 import AppShell from '@/components/layout/AppShell';
 import AuthGuard from '@/components/auth/AuthGuard';
 import UserAvatar from '@/components/ui/UserAvatar';
@@ -19,17 +18,11 @@ export default function NewPostPage() {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [visibility, setVisibility] = useState('public');
-
-  const visibilityOptions = [
-    { label: 'Public', value: 'public' },
-    { label: 'Private', value: 'private' },
-  ];
 
   const onSubmit = (e) => {
     e.preventDefault();
     createPost.mutate(
-      { title: title.trim(), content: content.trim(), visibility },
+      { title: title.trim(), content: content.trim() },
       { onSuccess: () => router.push('/') }
     );
   };
@@ -51,15 +44,9 @@ export default function NewPostPage() {
           </div>
           <InputText value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" className="w-full" required />
           <InputTextarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} placeholder="What's on your mind?" className="w-full" required />
-          <div>
-            <label className="text-sm font-semibold text-[#65676b] block mb-2">Who can see this?</label>
-            <SelectButton
-              value={visibility}
-              options={visibilityOptions}
-              onChange={(e) => e.value && setVisibility(e.value)}
-              optionLabel="label"
-            />
-          </div>
+          <p className="text-sm text-[#65676b]">
+            Posts follow your profile post privacy setting.
+          </p>
           <Button type="submit" label="Publish" loading={createPost.isPending} className="!bg-[#1877f2] !border-[#1877f2]" />
         </form>
       </AppShell>

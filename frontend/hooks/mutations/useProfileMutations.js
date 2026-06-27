@@ -43,6 +43,25 @@ export function useChangePasswordMutation() {
   });
 }
 
+export function useUpdatePrivacyMutation() {
+  const token = useApiToken();
+  const queryClient = useQueryClient();
+  const toast = useToast();
+
+  return useMutation({
+    mutationFn: (body) => api('/users/privacy', { method: 'PUT', token, body }),
+    onSuccess: (res) => {
+      const privacy = res.data;
+      queryClient.setQueryData(queryKeys.auth.privacy, privacy);
+      queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
+      toast.success('Privacy updated', 'Your post privacy setting was saved.');
+    },
+    onError: (err) => {
+      toast.error('Failed to update privacy', mutationErrorDetail(err));
+    },
+  });
+}
+
 export function useUploadAvatarMutation() {
   const token = useApiToken();
   const queryClient = useQueryClient();

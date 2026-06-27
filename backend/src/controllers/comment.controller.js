@@ -3,7 +3,7 @@ const { success } = require('../utils/response');
 
 const createComment = async (req, res, next) => {
   try {
-    await commentService.createComment(req.params.id, req.user.id, req.body);
+    await commentService.createComment(req.params.id, req.user, req.body);
     return success(res, 201, { message: 'Comment added' });
   } catch (err) {
     next(err);
@@ -12,7 +12,7 @@ const createComment = async (req, res, next) => {
 
 const getPostComments = async (req, res, next) => {
   try {
-    const comments = await commentService.getPostComments(req.params.id);
+    const comments = await commentService.getPostComments(req.params.id, req.user ?? null);
     return res.status(200).json(comments);
   } catch (err) {
     next(err);

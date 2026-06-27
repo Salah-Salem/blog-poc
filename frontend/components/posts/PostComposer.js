@@ -5,16 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
-import { SelectButton } from 'primereact/selectbutton';
 import { Dialog } from 'primereact/dialog';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { useAuth } from '@/context/AuthContext';
 import { useCreatePostMutation } from '@/hooks/mutations/usePostMutations';
-
-const visibilityOptions = [
-  { label: 'Public', value: 'public' },
-  { label: 'Private', value: 'private' },
-];
 
 export default function PostComposer() {
   const { user, isLoggedIn } = useAuth();
@@ -24,7 +18,6 @@ export default function PostComposer() {
   const [visible, setVisible] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [visibility, setVisibility] = useState('public');
 
   // if (!isLoggedIn) {
   //   return (
@@ -37,12 +30,11 @@ export default function PostComposer() {
 
   const submit = () => {
     createPost.mutate(
-      { title: title.trim(), content: content.trim(), visibility },
+      { title: title.trim(), content: content.trim() },
       {
         onSuccess: () => {
           setTitle('');
           setContent('');
-          setVisibility('public');
           setVisible(false);
         },
       }
@@ -88,15 +80,9 @@ export default function PostComposer() {
             placeholder="Share an update..."
             className="w-full"
           />
-          <div>
-            <label className="text-sm font-semibold text-[#65676b] block mb-2">Who can see this?</label>
-            <SelectButton
-              value={visibility}
-              options={visibilityOptions}
-              onChange={(e) => e.value && setVisibility(e.value)}
-              optionLabel="label"
-            />
-          </div>
+          <p className="text-sm text-[#65676b]">
+            Posts follow your profile post privacy setting.
+          </p>
           <Button
             label="Post"
             loading={createPost.isPending}

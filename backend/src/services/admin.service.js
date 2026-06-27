@@ -1,4 +1,4 @@
-const { User, Post, Comment } = require('../models');
+const { User, UserPrivacy, Post, Comment } = require('../models');
 const { ApiError } = require('../utils/response');
 
 const getStats = async () => {
@@ -14,6 +14,7 @@ const getStats = async () => {
 const listUsers = async () =>
   User.findAll({
     attributes: ['id', 'name', 'email', 'role', 'createdAt'],
+    include: [{ model: UserPrivacy, as: 'privacy', attributes: ['postVisibility'] }],
     order: [['createdAt', 'DESC']],
   });
 
@@ -47,7 +48,14 @@ const deleteUser = async (id, currentUserId) => {
 const listAllPosts = async () =>
   Post.findAll({
     order: [['createdAt', 'DESC']],
-    include: [{ model: User, as: 'author', attributes: ['id', 'name', 'email'] }],
+    include: [
+      {
+        model: User,
+        as: 'author',
+        attributes: ['id', 'name', 'email'],
+        include: [{ model: UserPrivacy, as: 'privacy', attributes: ['postVisibility'] }],
+      },
+    ],
   });
 
 const listAllComments = async () =>

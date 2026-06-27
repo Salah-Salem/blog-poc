@@ -19,6 +19,24 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
+const getPrivacy = async (req, res, next) => {
+  try {
+    const privacy = await userService.getPrivacy(req.user.id);
+    return success(res, 200, privacy);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updatePrivacy = async (req, res, next) => {
+  try {
+    const privacy = await userService.updatePrivacy(req.user.id, req.body);
+    return success(res, 200, { message: 'Privacy updated', data: privacy });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const changePassword = async (req, res, next) => {
   try {
     await userService.changePassword(req.user.id, req.body);
@@ -50,6 +68,8 @@ const getMyPosts = async (req, res, next) => {
 
 module.exports = {
   getProfile,
+  getPrivacy,
+  updatePrivacy,
   updateProfile,
   changePassword,
   uploadAvatar,

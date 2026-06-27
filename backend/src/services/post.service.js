@@ -1,5 +1,5 @@
 const { literal, Op } = require('sequelize');
-const { Post, User, Comment, PostReaction } = require('../models');
+const { Post, User, UserPrivacy, Comment, PostReaction } = require('../models');
 const { ApiError } = require('../utils/response');
 
 const reactionCountLiteral = (type) =>
@@ -12,6 +12,13 @@ const currentUserReactionLiteral = (user) => {
   return literal(
     `(SELECT \`type\` FROM \`post_reactions\` AS \`currentUserReactions\` WHERE \`currentUserReactions\`.\`postId\` = \`Post\`.\`id\` AND \`currentUserReactions\`.\`userId\` = ${Number(user.id)} LIMIT 1)`
   );
+};
+
+const authorAttributes = ['id', 'name', 'email', 'profileImage'];
+const authorPrivacyInclude = {
+  model: UserPrivacy,
+  as: 'privacy',
+  attributes: ['postVisibility'],
 };
 
 const postListAttributes = (user) => ({
@@ -28,11 +35,8 @@ const postListAttributes = (user) => ({
   ],
 });
 
-const createPost = async (userId, { title, content, visibility = 'public' }) => {
-  if (!['public', 'private'].includes(visibility)) {
-    throw new ApiError(422, 'visibility must be public or private');
-  }
-  return Post.create({ title, content, userId, visibility });
+const createPost = async (userId, { title, content }) => {
+  return Post.create({ title, content, userId });
 };
 
 const getPosts = async ({ page = 1, limit = 10, search = '' }, user = null) => {
@@ -40,8 +44,12 @@ const getPosts = async ({ page = 1, limit = 10, search = '' }, user = null) => {
   const pageSize = Math.max(Number(limit) || 10, 1);
   const offset = (currentPage - 1) * pageSize;
 
-  const where = { visibility: 'public' };
+  const where = {};
   if (search) where.title = { [Op.like]: `%${search}%` };
+
+  const visibilityFilters = [{ '$author.privacy.postVisibility$': 'public' }];
+  if (user) visibilityFilters.push({ userId: user.id });
+  where[Op.and] = [{ [Op.or]: visibilityFilters }];
 
   const { count, rows } = await Post.findAndCountAll({
     where,
@@ -49,7 +57,15 @@ const getPosts = async ({ page = 1, limit = 10, search = '' }, user = null) => {
     limit: pageSize,
     offset,
     order: [['createdAt', 'DESC']],
-    include: [{ model: User, as: 'author', attributes: ['id', 'name', 'email', 'profileImage'] }],
+    include: [
+      {
+        model: User,
+        as: 'author',
+        attributes: authorAttributes,
+        required: true,
+        include: [{ ...authorPrivacyInclude, required: false }],
+      },
+    ],
   });
 
   return {
@@ -64,18 +80,19 @@ const getPosts = async ({ page = 1, limit = 10, search = '' }, user = null) => {
 };
 
 const assertCanViewPost = (post, user) => {
-  if (post.visibility === 'public') return;
-  if (!user) throw new ApiError(403, 'This post is private');
+  const postVisibility = post.author?.privacy?.postVisibility || 'public';
+  if (postVisibility === 'public') return;
+  if (!user) throw new ApiError(403, "This profile's posts are private");
   const isOwner = post.userId === user.id;
   const isAdmin = user.role === 'admin';
-  if (!isOwner && !isAdmin) throw new ApiError(403, 'This post is private');
+  if (!isOwner && !isAdmin) throw new ApiError(403, "This profile's posts are private");
 };
 
 const getPostById = async (id, user = null) => {
   const post = await Post.findByPk(id, {
     attributes: postListAttributes(user),
     include: [
-      { model: User, as: 'author', attributes: ['id', 'name', 'email', 'profileImage'] },
+      { model: User, as: 'author', attributes: authorAttributes, include: [authorPrivacyInclude] },
       {
         model: Comment,
         as: 'comments',
@@ -103,18 +120,21 @@ const getReactionSummary = async (postId, userId) => {
   };
 };
 
-const reactToPost = async (postId, userId, { type }) => {
+const reactToPost = async (postId, user, { type }) => {
   if (!['like', 'dislike'].includes(type)) {
     throw new ApiError(422, 'type must be like or dislike');
   }
 
-  const post = await Post.findByPk(postId);
+  const post = await Post.findByPk(postId, {
+    include: [{ model: User, as: 'author', attributes: authorAttributes, include: [authorPrivacyInclude] }],
+  });
   if (!post) throw new ApiError(404, 'Post not found');
+  assertCanViewPost(post, user);
 
-  const existing = await PostReaction.findOne({ where: { postId, userId } });
+  const existing = await PostReaction.findOne({ where: { postId, userId: user.id } });
 
   if (!existing) {
-    await PostReaction.create({ postId, userId, type });
+    await PostReaction.create({ postId, userId: user.id, type });
   } else if (existing.type === type) {
     await existing.destroy();
   } else {
@@ -122,7 +142,7 @@ const reactToPost = async (postId, userId, { type }) => {
     await existing.save();
   }
 
-  return getReactionSummary(postId, userId);
+  return getReactionSummary(postId, user.id);
 };
 
 const getEditablePost = async (id, user) => {
@@ -136,16 +156,10 @@ const getEditablePost = async (id, user) => {
   return post;
 };
 
-const updatePost = async (id, user, { title, content, visibility }) => {
+const updatePost = async (id, user, { title, content }) => {
   const post = await getEditablePost(id, user);
   if (title !== undefined) post.title = title;
   if (content !== undefined) post.content = content;
-  if (visibility !== undefined) {
-    if (!['public', 'private'].includes(visibility)) {
-      throw new ApiError(422, 'visibility must be public or private');
-    }
-    post.visibility = visibility;
-  }
   await post.save();
   return post;
 };

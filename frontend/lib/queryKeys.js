@@ -13,6 +13,7 @@ export const queryKeys = {
   },
   auth: {
     profile: ['auth', 'profile'],
+    privacy: ['auth', 'privacy'],
   },
   admin: {
     all: ['admin'],

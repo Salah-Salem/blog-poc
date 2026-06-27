@@ -69,6 +69,7 @@ export default function AdminPage() {
                       <Column field="name" header="Name" />
                       <Column field="email" header="Email" />
                       <Column field="role" header="Role" />
+                      <Column field="privacy.postVisibility" header="Post Privacy" />
                       <Column
                         header="Actions"
                         body={(row) =>
@@ -81,6 +82,7 @@ export default function AdminPage() {
                     <DataTable value={posts} paginator rows={5} size="small">
                       <Column field="title" header="Title" />
                       <Column field="author.name" header="Author" />
+                      <Column field="author.privacy.postVisibility" header="Author Privacy" />
                       <Column
                         header="Actions"
                         body={(row) =>

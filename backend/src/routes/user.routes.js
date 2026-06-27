@@ -23,6 +23,18 @@ router.put(
   validate,
   userController.updateProfile
 );
+router.get('/privacy', authenticate, userController.getPrivacy);
+router.put(
+  '/privacy',
+  authenticate,
+  [
+    body('postVisibility')
+      .isIn(['public', 'private'])
+      .withMessage('postVisibility must be public or private'),
+  ],
+  validate,
+  userController.updatePrivacy
+);
 router.put(
   '/password',
   authenticate,

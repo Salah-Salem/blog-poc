@@ -48,7 +48,7 @@ const deletePost = async (req, res, next) => {
 
 const reactToPost = async (req, res, next) => {
   try {
-    const result = await postService.reactToPost(req.params.id, req.user.id, req.body);
+    const result = await postService.reactToPost(req.params.id, req.user, req.body);
     return success(res, 200, result);
   } catch (err) {
     next(err);

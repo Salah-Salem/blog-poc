@@ -1,34 +1,32 @@
 const { DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Post extends Model {}
+  class UserPrivacy extends Model {}
 
-  Post.init(
+  UserPrivacy.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: true,
+      },
+      postVisibility: {
+        type: DataTypes.ENUM('public', 'private'),
+        allowNull: false,
+        defaultValue: 'public',
       },
     },
     {
       sequelize,
-      modelName: 'Post',
-      tableName: 'posts',
+      modelName: 'UserPrivacy',
+      tableName: 'user_privacies',
     }
   );
 
-  return Post;
+  return UserPrivacy;
 };

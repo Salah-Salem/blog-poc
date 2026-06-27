@@ -10,7 +10,6 @@ const router = express.Router();
 const postValidation = [
   body('title').trim().notEmpty().withMessage('title is required'),
   body('content').trim().notEmpty().withMessage('content is required'),
-  body('visibility').optional().isIn(['public', 'private']).withMessage('visibility must be public or private'),
 ];
 
 router.get('/', optionalAuthenticate, postController.getPosts);
@@ -26,7 +25,7 @@ router.post(
   postController.reactToPost
 );
 
-router.get('/:id/comments', commentController.getPostComments);
+router.get('/:id/comments', optionalAuthenticate, commentController.getPostComments);
 router.post(
   '/:id/comments',
   authenticate,

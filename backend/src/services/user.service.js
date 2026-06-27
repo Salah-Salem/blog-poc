@@ -1,5 +1,5 @@
 const { literal } = require('sequelize');
-const { User, Post, Comment } = require('../models');
+const { User, UserPrivacy, Post, Comment } = require('../models');
 const { ApiError } = require('../utils/response');
 
 const postReactionAttributes = (userId) => ({
@@ -35,6 +35,29 @@ const getProfile = (user) => ({
   address: user.address,
   dateOfBirth: user.dateOfBirth,
 });
+
+const getPrivacy = async (userId) => {
+  const [privacy] = await UserPrivacy.findOrCreate({
+    where: { userId },
+    defaults: { userId, postVisibility: 'public' },
+  });
+  return { postVisibility: privacy.postVisibility };
+};
+
+const updatePrivacy = async (userId, { postVisibility }) => {
+  if (!['public', 'private'].includes(postVisibility)) {
+    throw new ApiError(422, 'postVisibility must be public or private');
+  }
+
+  const [privacy] = await UserPrivacy.findOrCreate({
+    where: { userId },
+    defaults: { userId, postVisibility },
+  });
+  privacy.postVisibility = postVisibility;
+  await privacy.save();
+
+  return { postVisibility: privacy.postVisibility };
+};
 
 const updateProfile = async (userId, { name, phone, address, dateOfBirth }) => {
   const user = await User.findByPk(userId);
@@ -80,7 +103,12 @@ const getMyPosts = async (userId, { page = 1, limit = 10 } = {}) => {
     offset,
     order: [['createdAt', 'DESC']],
     include: [
-      { model: User, as: 'author', attributes: ['id', 'name', 'email', 'profileImage'] },
+      {
+        model: User,
+        as: 'author',
+        attributes: ['id', 'name', 'email', 'profileImage'],
+        include: [{ model: UserPrivacy, as: 'privacy', attributes: ['postVisibility'] }],
+      },
       {
         model: Comment,
         as: 'comments',
@@ -102,6 +130,8 @@ const getMyPosts = async (userId, { page = 1, limit = 10 } = {}) => {
 
 module.exports = {
   getProfile,
+  getPrivacy,
+  updatePrivacy,
   updateProfile,
   changePassword,
   updateProfileImage,

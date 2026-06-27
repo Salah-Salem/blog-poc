@@ -31,6 +31,7 @@ export default function EditProfilePage() {
   const [address, setAddress] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(null);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!profile) return;
     const mapped = mapUserProfile(profile);
@@ -39,6 +40,7 @@ export default function EditProfilePage() {
     setAddress(mapped.address);
     setDateOfBirth(mapped.dateOfBirth ? new Date(mapped.dateOfBirth) : null);
   }, [profile]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const onAvatarUpload = ({ files }) => {
     if (!files?.[0]) return;
