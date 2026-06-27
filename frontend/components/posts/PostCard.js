@@ -94,9 +94,9 @@ export default function PostCard({
   };
 
   return (
-    <article className="fb-card overflow-hidden">
+    <article className="fb-card fb-card-hover overflow-hidden">
       <ConfirmDialog />
-      <div className="p-4 flex items-center gap-3">
+      <div className="flex items-center gap-3 p-4 pb-2">
         <UserAvatar name={author} image={authorImage} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
@@ -115,16 +115,16 @@ export default function PostCard({
 
       <div className="px-4 pb-3">
         {showFull ? (
-          <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <h1 className="text-xl font-bold text-[#050505]">{post.title}</h1>
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-bold leading-tight text-[#050505]">{post.title}</h1>
             <VisibilityBadge visibility={profilePostVisibility} />
           </div>
         ) : (
           <Link href={`/posts/${post.id}`}>
-            <h2 className="text-lg font-bold text-[#050505] hover:underline mb-2">{post.title}</h2>
+            <h2 className="mb-2 text-[17px] font-bold leading-snug text-[#050505] hover:underline">{post.title}</h2>
           </Link>
         )}
-        <p className="text-[#050505] whitespace-pre-wrap leading-relaxed">{excerpt}</p>
+        <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#050505]">{excerpt}</p>
         {!showFull && post.content?.length > 280 && (
           <Link href={`/posts/${post.id}`} className="text-[#65676b] text-sm font-semibold mt-2 inline-block">
             See more
@@ -132,13 +132,14 @@ export default function PostCard({
         )}
       </div>
 
-      <div className="border-t border-[#dddfe2] px-2 py-1 flex">
+      <div className="mx-4 border-t border-[#e4e6eb] px-0 py-1">
+        <div className="grid grid-cols-3 gap-1">
         <Link href={`/posts/${post.id}`} className="flex-1">
           <Button
             label={`Comments (${commentCount})`}
             icon="pi pi-comment"
             text
-            className="w-full text-[#65676b]! font-semibold!"
+            className="w-full text-[#65676b]! font-semibold! hover:!bg-[#f2f3f5]"
           />
         </Link>
         <Button
@@ -149,7 +150,7 @@ export default function PostCard({
           loading={reactPost.isPending}
           className={`flex-1 font-semibold! ${
             currentReaction === 'like' ? 'text-[#1877f2]!' : 'text-[#65676b]!'
-          }`}
+          } hover:!bg-[#f2f3f5]`}
           onClick={() => handleReaction('like')}
         />
         <Button
@@ -160,9 +161,10 @@ export default function PostCard({
           loading={reactPost.isPending}
           className={`flex-1 font-semibold! ${
             currentReaction === 'dislike' ? 'text-[#1877f2]!' : 'text-[#65676b]!'
-          }`}
+          } hover:!bg-[#f2f3f5]`}
           onClick={() => handleReaction('dislike')}
         />
+        </div>
       </div>
 
       <Dialog

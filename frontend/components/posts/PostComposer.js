@@ -43,20 +43,21 @@ export default function PostComposer() {
 
   return (
     <>
-      {isLoggedIn && <div className="fb-card p-4">
+      {isLoggedIn && <div className="fb-card fb-card-hover p-3">
         <div className="flex gap-3 items-center">
           <UserAvatar name={user?.name} image={user?.profileImage} />
           <button
             type="button"
             onClick={() => setVisible(true)}
-            className="flex-1 text-left bg-[#f0f2f5] hover:bg-[#e4e6eb] rounded-full px-4 py-3 text-[#65676b] font-medium transition-colors"
+            className="flex-1 rounded-full bg-[#f0f2f5] px-4 py-2.5 text-left text-[15px] font-medium text-[#65676b] transition-colors hover:bg-[#e4e6eb]"
           >
             What&apos;s on your mind, {user?.name?.split(' ')[0]}?
           </button>
         </div>
-        <div className="border-t border-[#dddfe2] mt-3 pt-2 flex justify-around">
-          <Button label="Photo" icon="pi pi-image" text className="!text-[#65676b]" disabled />
-          <Button label="Article" icon="pi pi-file-edit" text className="!text-[#65676b]" onClick={() => setVisible(true)} />
+        <div className="mt-3 flex justify-around border-t border-[#e4e6eb] pt-2">
+          <Button label="Live" icon="pi pi-video" text className="flex-1 !text-[#65676b] hover:!bg-[#f2f3f5]" disabled />
+          <Button label="Photo" icon="pi pi-image" text className="flex-1 !text-[#65676b] hover:!bg-[#f2f3f5]" disabled />
+          <Button label="Article" icon="pi pi-file-edit" text className="flex-1 !text-[#65676b] hover:!bg-[#f2f3f5]" onClick={() => setVisible(true)} />
         </div>
       </div>}
 
@@ -68,21 +69,21 @@ export default function PostComposer() {
         modal
       >
         <div className="space-y-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 border-b border-[#e4e6eb] pb-3">
             <UserAvatar name={user?.name} image={user?.profileImage} />
-            <span className="font-semibold">{user?.name}</span>
+            <div>
+              <span className="font-semibold text-[#050505]">{user?.name}</span>
+              <p className="text-xs text-[#65676b]">Posts follow your profile privacy setting.</p>
+            </div>
           </div>
-          <InputText value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" className="w-full" />
+          <InputText value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" className="w-full !border-0 !px-0 !text-lg !font-semibold focus:!shadow-none" />
           <InputTextarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={5}
-            placeholder="Share an update..."
-            className="w-full"
+            placeholder={`What's on your mind, ${user?.name?.split(' ')[0] || 'there'}?`}
+            className="w-full !resize-none !border-0 !px-0 !text-lg focus:!shadow-none"
           />
-          <p className="text-sm text-[#65676b]">
-            Posts follow your profile post privacy setting.
-          </p>
           <Button
             label="Post"
             loading={createPost.isPending}

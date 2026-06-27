@@ -38,7 +38,7 @@ export default function AdminPage() {
 
   return (
     <AuthGuard adminOnly>
-      <AppShell>
+      <AppShell hideSidebars>
         <div className="space-y-4">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 

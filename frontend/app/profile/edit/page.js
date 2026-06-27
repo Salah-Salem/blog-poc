@@ -78,7 +78,7 @@ export default function EditProfilePage() {
 
   return (
     <AuthGuard>
-      <AppShell>
+      <AppShell hideSidebars>
         <div className="max-w-3xl mx-auto space-y-4">
           <Link
             href="/profile"

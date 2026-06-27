@@ -34,20 +34,20 @@ export default function NewPostPage() {
   return (
     <AuthGuard>
       <AppShell>
-        <form onSubmit={onSubmit} className="fb-card p-5 space-y-4">
-          <div className="flex items-center gap-3 border-b border-[#dddfe2] pb-4">
+        <form onSubmit={onSubmit} className="fb-card fb-card-hover space-y-4 p-4">
+          <div className="flex items-center gap-3 border-b border-[#e4e6eb] pb-4">
             <UserAvatar name={user.name} image={user.profileImage} />
             <div>
-              <h1 className="text-xl font-bold">Create post</h1>
+              <h1 className="text-xl font-bold text-[#050505]">Create post</h1>
               <p className="text-sm text-[#65676b]">Sharing as {user.name}</p>
             </div>
           </div>
-          <InputText value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" className="w-full" required />
-          <InputTextarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} placeholder="What's on your mind?" className="w-full" required />
+          <InputText value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" className="w-full !text-lg !font-semibold" required />
+          <InputTextarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} placeholder="What's on your mind?" className="w-full !resize-none" required />
           <p className="text-sm text-[#65676b]">
             Posts follow your profile post privacy setting.
           </p>
-          <Button type="submit" label="Publish" loading={createPost.isPending} className="!bg-[#1877f2] !border-[#1877f2]" />
+          <Button type="submit" label="Publish" loading={createPost.isPending} className="w-full !border-[#1877f2] !bg-[#1877f2]" />
         </form>
       </AppShell>
     </AuthGuard>

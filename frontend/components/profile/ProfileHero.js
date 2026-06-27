@@ -10,7 +10,9 @@ export default function ProfileHero({ user, showEdit = true }) {
 
   return (
     <div className="profile-hero">
-      <div className="profile-hero-cover" />
+      <div className="profile-hero-cover">
+        <div className="profile-hero-cover-shade" />
+      </div>
       <div className="profile-hero-body">
         <div className="profile-hero-avatar">
           <UserAvatar name={user.name} image={user.profileImage} size="xlarge" />
@@ -31,11 +33,22 @@ export default function ProfileHero({ user, showEdit = true }) {
             <p className="profile-hero-address"><i className="pi pi-map-marker" /> {user.address}</p>
           )}
         </div>
-        {showEdit && (
-          <Link href="/profile/edit" className="profile-hero-action">
-            <Button label="Edit Profile" icon="pi pi-pencil" className="!bg-[#1877f2] !border-[#1877f2]" />
+        <div className="profile-hero-actions">
+          <Link href="/posts/new">
+            <Button label="Add post" icon="pi pi-plus" className="!border-[#1877f2] !bg-[#1877f2]" />
           </Link>
-        )}
+          {showEdit && (
+            <Link href="/profile/edit" className="profile-hero-action">
+              <Button label="Edit profile" icon="pi pi-pencil" className="!border-[#e4e6eb] !bg-[#e4e6eb] !text-[#050505]" />
+            </Link>
+          )}
+        </div>
+      </div>
+      <div className="profile-hero-tabs">
+        <a href="#posts" className="profile-hero-tab profile-hero-tab-active">Posts</a>
+        <a href="#about" className="profile-hero-tab">About</a>
+        <a href="#privacy" className="profile-hero-tab">Privacy</a>
+        <a href="#security" className="profile-hero-tab">Security</a>
       </div>
     </div>
   );

@@ -4,20 +4,131 @@
 
 :root {
   --fb-blue: #1877f2;
+  --fb-blue-dark: #166fe5;
+  --fb-green: #42b72a;
   --fb-bg: #f0f2f5;
+  --fb-card: #ffffff;
+  --fb-hover: #f2f3f5;
   --fb-text: #050505;
   --fb-muted: #65676b;
   --fb-border: #dddfe2;
+  --fb-soft-border: #e4e6eb;
+  --fb-radius: 8px;
+  --fb-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  --fb-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+html {
+  background: var(--fb-bg);
 }
 
 body {
   background: var(--fb-bg);
   color: var(--fb-text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(24, 119, 242, 0.18);
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .fb-card {
-  @apply bg-white rounded-lg shadow-sm border border-[#dddfe2];
+  background: var(--fb-card);
+  border: 1px solid var(--fb-soft-border);
+  border-radius: var(--fb-radius);
+  box-shadow: var(--fb-shadow);
+}
+
+.fb-card-hover {
+  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+.fb-card-hover:hover {
+  border-color: rgba(24, 119, 242, 0.18);
+  box-shadow: var(--fb-shadow-hover);
+}
+
+.fb-action {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-[#65676b] transition-colors;
+}
+
+.fb-action:hover {
+  background: var(--fb-hover);
+  color: var(--fb-text);
+}
+
+.fb-icon-button {
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-[#65676b] transition-colors;
+  background: #f0f2f5;
+}
+
+.fb-icon-button:hover {
+  background: #e4e6eb;
+  color: var(--fb-text);
+}
+
+.p-button {
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.p-inputtext,
+.p-inputtextarea,
+.p-password input,
+.p-calendar input {
+  border-color: var(--fb-soft-border);
+  border-radius: 8px;
+  color: var(--fb-text);
+  box-shadow: none;
+}
+
+.p-inputtext:enabled:focus,
+.p-inputtextarea:enabled:focus,
+.p-password input:enabled:focus,
+.p-calendar input:enabled:focus {
+  border-color: var(--fb-blue);
+  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.14);
+}
+
+.p-dialog {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid var(--fb-soft-border);
+  padding: 1rem 1.25rem;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 1.25rem;
+}
+
+.p-tabview .p-tabview-nav {
+  border-color: var(--fb-soft-border);
+}
+
+.p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  border-radius: 8px 8px 0 0;
+  color: var(--fb-muted);
+  font-weight: 700;
+}
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  color: var(--fb-blue);
+  border-color: var(--fb-blue);
+}
+
+.p-tabview .p-tabview-panels {
+  padding: 1rem 0 0;
 }
 
 .p-input-icon-left {
@@ -37,24 +148,44 @@ body {
 }
 
 /* Profile hero */
+.profile-page {
+  @apply pb-8;
+}
+
 .profile-hero {
-  @apply bg-white rounded-xl shadow-sm border border-[#dddfe2] overflow-hidden;
+  @apply bg-white overflow-hidden;
+  border: 1px solid var(--fb-soft-border);
+  border-radius: 8px;
+  box-shadow: var(--fb-shadow);
 }
 .profile-hero-cover {
-  height: 160px;
-  background: linear-gradient(135deg, #1877f2 0%, #6c5ce7 50%, #00b894 100%);
+  position: relative;
+  height: 190px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.35), transparent 22%),
+    linear-gradient(135deg, #1877f2 0%, #3b5998 48%, #8b9dc3 100%);
+}
+.profile-hero-cover-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.22));
 }
 .profile-hero-body {
-  @apply relative px-6 pb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-end;
+  @apply relative px-4 sm:px-8 pb-5 flex flex-col sm:flex-row gap-4 items-start sm:items-end;
 }
 .profile-hero-avatar {
-  @apply -mt-12 ring-4 ring-white rounded-full;
+  @apply -mt-16 rounded-full ring-4 ring-white;
+}
+.profile-hero-avatar .p-avatar {
+  width: 8.5rem;
+  height: 8.5rem;
+  font-size: 3rem;
 }
 .profile-hero-info {
   @apply flex-1 pt-2 sm:pt-0 min-w-0;
 }
 .profile-hero-name {
-  @apply text-2xl font-bold text-[#050505];
+  @apply text-3xl font-black leading-tight text-[#050505];
 }
 .profile-hero-email {
   @apply text-[#65676b];
@@ -68,15 +199,113 @@ body {
 .profile-hero-address {
   @apply text-sm text-[#65676b] mt-2 flex items-start gap-1;
 }
+.profile-hero-actions {
+  @apply flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end;
+}
 .profile-hero-action {
   @apply shrink-0;
+}
+.profile-hero-tabs {
+  @apply mx-4 flex gap-1 overflow-x-auto border-t border-[#e4e6eb] px-1 sm:mx-8;
+}
+.profile-hero-tab {
+  @apply flex min-h-14 items-center border-b-4 border-transparent px-4 text-sm font-bold text-[#65676b] transition-colors hover:bg-[#f2f3f5] hover:text-[#050505];
+}
+.profile-hero-tab-active {
+  @apply border-[#1877f2] text-[#1877f2];
+}
+
+.profile-content-grid {
+  @apply grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] lg:items-start;
+}
+.profile-sidebar {
+  @apply space-y-4 lg:sticky lg:top-20;
+}
+.profile-main-panel {
+  @apply min-w-0;
+}
+.profile-tabs-card {
+  @apply p-4;
+}
+.profile-card-header {
+  @apply mb-3 flex items-center justify-between gap-3;
+}
+.profile-card-header h2 {
+  @apply text-xl font-black text-[#050505];
+}
+.profile-card-header a {
+  @apply text-sm font-bold text-[#1877f2] hover:underline;
+}
+.profile-intro-card {
+  @apply p-4;
+}
+.profile-intro-list {
+  @apply space-y-3 text-sm text-[#050505];
+}
+.profile-intro-list p {
+  @apply flex items-start gap-3 leading-relaxed;
+}
+.profile-intro-list i {
+  @apply mt-0.5 w-5 text-center text-[#65676b];
+}
+.profile-stats-card {
+  @apply grid grid-cols-2 divide-x divide-[#e4e6eb] p-0;
+}
+.profile-stats-card div {
+  @apply p-4 text-center;
+}
+.profile-stats-card strong {
+  @apply block text-xl font-black text-[#050505];
+}
+.profile-stats-card span {
+  @apply mt-1 block text-xs font-bold uppercase tracking-wide text-[#65676b];
+}
+.profile-photos-card {
+  @apply p-4;
+}
+.profile-highlight-grid {
+  @apply grid grid-cols-2 gap-2;
+}
+.profile-highlight-grid div {
+  @apply flex aspect-square flex-col items-center justify-center gap-2 rounded-lg bg-[#f0f2f5] text-sm font-bold text-[#65676b];
+}
+.profile-highlight-grid i {
+  @apply text-2xl text-[#1877f2];
+}
+.profile-section-title {
+  @apply mb-4 flex flex-col gap-3 border-b border-[#e4e6eb] pb-4 sm:flex-row sm:items-center sm:justify-between;
+}
+.profile-section-title h2 {
+  @apply text-xl font-black text-[#050505];
+}
+.profile-section-title p {
+  @apply text-sm text-[#65676b];
+}
+.profile-empty-state {
+  @apply rounded-lg bg-[#f7f8fa] py-12 text-center text-[#65676b];
+}
+.profile-empty-state i {
+  @apply mb-3 block text-4xl text-[#bcc0c4];
+}
+.profile-privacy-panel,
+.profile-security-form {
+  @apply max-w-xl space-y-4 rounded-lg bg-[#f7f8fa] p-5;
+}
+.profile-panel-icon {
+  @apply inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#e7f3ff] text-xl text-[#1877f2];
+}
+.profile-current-privacy {
+  @apply flex flex-wrap items-center gap-3 rounded-lg bg-white p-3 shadow-sm;
 }
 
 .profile-info-grid {
   @apply grid grid-cols-1 sm:grid-cols-2 gap-3;
 }
 .profile-info-card {
-  @apply bg-white rounded-xl border border-[#dddfe2] p-4 flex gap-3 items-start shadow-sm;
+  @apply bg-white p-4 flex gap-3 items-start;
+  border: 1px solid var(--fb-soft-border);
+  border-radius: 8px;
+  box-shadow: var(--fb-shadow);
 }
 .profile-info-card-wide {
   @apply sm:col-span-2;
@@ -93,10 +322,13 @@ body {
 
 /* Edit profile */
 .edit-profile-card {
-  @apply bg-white rounded-xl border border-[#dddfe2] shadow-sm overflow-hidden;
+  @apply bg-white overflow-hidden;
+  border: 1px solid var(--fb-soft-border);
+  border-radius: 8px;
+  box-shadow: var(--fb-shadow);
 }
 .edit-profile-header {
-  @apply px-6 py-5 border-b border-[#dddfe2] bg-gradient-to-r from-[#f8fafc] to-[#eef2ff];
+  @apply px-6 py-5 border-b border-[#e4e6eb] bg-white;
 }
 .edit-profile-header h1 {
   @apply text-2xl font-bold text-[#050505];
@@ -143,6 +375,10 @@ body {
 /* Auth pages */
 .auth-page {
   @apply min-h-screen bg-[#f0f2f5] flex items-center justify-center p-4;
+  background:
+    radial-gradient(circle at top left, rgba(24, 119, 242, 0.12), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(66, 183, 42, 0.1), transparent 28%),
+    var(--fb-bg);
 }
 .auth-page-grid {
   @apply w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-center;
@@ -154,7 +390,8 @@ body {
   @apply text-lg text-[#65676b] mt-3 leading-relaxed;
 }
 .auth-brand-badge {
-  @apply inline-block bg-[#1877f2] text-white font-bold text-xl px-4 py-2 rounded-lg;
+  @apply inline-flex items-center bg-[#1877f2] text-white font-bold text-xl px-4 py-2 rounded-lg;
+  box-shadow: 0 8px 20px rgba(24, 119, 242, 0.25);
 }
 .auth-brand-features {
   @apply mt-6 space-y-3 text-[#050505];
@@ -166,7 +403,10 @@ body {
   @apply text-[#42b72a];
 }
 .auth-form-card {
-  @apply bg-white rounded-xl border border-[#dddfe2] shadow-lg p-6 space-y-4;
+  @apply bg-white p-6 space-y-4;
+  border: 1px solid var(--fb-soft-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16);
 }
 .auth-form-header h2 {
   @apply text-2xl font-bold text-[#050505];

@@ -6,9 +6,11 @@ export default function AppShell({ children, hideSidebars = false }) {
   return (
     <div className="min-h-screen bg-[#f0f2f5]">
       <TopNav />
-      <div className=" mx-auto px-12 py-4 flex gap-4">
+      <div className="flex w-full gap-4 px-3 py-4 sm:px-4 lg:px-16">
         {!hideSidebars && <LeftSidebar />}
-        <main className="flex-1 mx-auto w-full">{children}</main>
+        <main className="min-w-0 flex-1 w-full">
+          {children}
+        </main>
         {!hideSidebars && <RightSidebar />}
       </div>
     </div>
